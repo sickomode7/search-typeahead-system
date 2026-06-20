@@ -72,4 +72,12 @@ If the system needed to scale to millions of DAU:
 
 ## 7. Running with Docker
 
+```bash
 docker-compose up --build
+```
+
+This starts Redis, the backend, and the frontend together. No manual Redis setup needed.
+
+## 8. Redis Cache Architecture
+
+The cache layer uses 3 logical Redis databases (db0, db1, db2) on a single Redis instance to simulate 3 distributed cache nodes. Consistent hashing decides which DB owns each prefix key. If Redis is unavailable, the system automatically falls back to in-memory Maps and logs a warning.

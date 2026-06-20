@@ -28,6 +28,12 @@ The TTL is set to **60 seconds**.
 * **What goes stale:** If a query suddenly goes viral within that 60-second window, the cached `top10` array for a given prefix will not instantly reflect the new ranking.
 * **Mitigation:** The BatchWriter actively invalidates 1, 2, and 3-character caches when a flush alters the top 10 rankings, preventing the most contentious and widely-viewed root prefixes from remaining stale for the full 60 seconds.
 
+### Redis Implementation
+- 3 logical Redis DBs (db0/db1/db2) simulate 3 distributed nodes
+- TTL is handled natively by Redis SETEX rather than manual timestamp checks
+- Fallback to in-memory Maps if Redis is unavailable, ensuring the app never goes down due to cache failure
+- In production, each DB would be a separate Redis instance or cluster shard
+
 ---
 
 ## 3. Consistent Hashing
