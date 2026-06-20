@@ -35,10 +35,13 @@ class CacheLayer {
             }
         };
 
-        // Suppress unhandled errors from disconnected Redis on startup
-        for (const node in this.redisClients) {
-            this.redisClients[node].on('error', (err) => {
+        // Suppress unhandled errors from disconnected Redis on startup, log success
+        for (const [node, client] of Object.entries(this.redisClients)) {
+            client.on('error', (err) => {
                 // Redis throws continuously when disconnected, keep it quiet
+            });
+            client.on('ready', () => {
+                console.log(`Redis connected: ${node} -> DB ${client.options.db}`);
             });
         }
     }
