@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@config "../tailwind.config.js";
+
+body {
+  @apply bg-darkBg text-white font-mono m-0 p-0;
+}
