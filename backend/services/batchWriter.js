@@ -41,7 +41,7 @@ class BatchWriter {
         }
     }
 
-    flush() {
+    async flush() {
         if (this.buffer.size === 0) return;
         
         if (this.timer) {
@@ -70,7 +70,7 @@ class BatchWriter {
             // Cache invalidation for short prefixes (1-3 chars)
             for (let i = 1; i <= Math.min(3, query.length); i++) {
                 const prefix = query.substring(0, i);
-                cacheLayer.invalidatePrefix(prefix);
+                await cacheLayer.invalidatePrefix(prefix);
             }
         }
 

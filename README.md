@@ -69,3 +69,7 @@ If the system needed to scale to millions of DAU:
 1. **Decouple Architecture:** The Trie DataStore, BatchWriter, and Caches currently live in the same Node.js memory process. We would rip the cache out into dedicated Redis clusters, and rip the Trie out into a custom Go/Rust microservice or Apache Solr/ElasticSearch index.
 2. **Kafka Ingest:** The Batch Writer would be replaced by streaming all `POST /search` hits natively into an Apache Kafka topic for high durability before parsing them into the database.
 3. **Edge Caching:** `/suggest` API responses would be cached explicitly at the CDN level (Cloudflare / Fastly) by regions to offload 90% of reads from our servers entirely.
+
+## 7. Running with Docker
+
+docker-compose up --build
