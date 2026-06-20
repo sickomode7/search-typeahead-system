@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Search Typeahead System — Architecture</title>
+<style>
+  body {
+    background-color: #0f0f13;
+    color: #ffffff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 30px;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+  }
+  .container {
+    position: relative;
+    width: 1550px;
+    height: 900px;
+    background: #18181f;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    border: 1px solid #2a2a35;
+    overflow: hidden;
+  }
+  h1 {
+    position: absolute;
+    top: 20px;
+    left: 40px;
+    color: #f3f4f6;
+    margin: 0;
+    font-size: 28px;
+    z-index: 20;
+  }
+  svg {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: 10;
+  }
+  .box-layer {
+    position: absolute;
+    border-radius: 8px;
+    padding: 15px;
+    padding-top: 40px;
+    box-sizing: border-box;
+    border: 2px dashed;
+    z-index: 5;
+  }
+  .layer-title {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    font-size: 14px;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+  }
+  .node {
+    background-color: #2a2a35;
+    border: 2px solid;
+    border-radius: 6px;
+    padding: 12px;
+    margin-bottom: 12px;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+    text-align: center;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .subtext { font-size: 12px; color: #a1a1aa; margin-top: 6px; font-weight: normal; }
+  
+  /* Colors */
+  .layer-client { border-color: #3b82f6; background: rgba(59, 130, 246, 0.05); }
+  .layer-client .layer-title { color: #3b82f6; }
+  .layer-client .node { border-color: #3b82f6; }
+  
+  .layer-frontend { border-color: #8b5cf6; background: rgba(139, 92, 246, 0.05); }
+  .layer-frontend .layer-title { color: #8b5cf6; }
+  .layer-frontend .node { border-color: #8b5cf6; }
+  
+  .layer-backend { border-color: #06b6d4; background: rgba(6, 182, 212, 0.05); }
+  .layer-backend .layer-title { color: #06b6d4; }
+  .layer-backend .node { border-color: #06b6d4; }
+  
+  .layer-cache { border-color: #f59e0b; background: rgba(245, 158, 11, 0.05); }
+  .layer-cache .layer-title { color: #f59e0b; }
+  .layer-cache .node { border-color: #f59e0b; }
+  
+  .layer-data { border-color: #10b981; background: rgba(16, 185, 129, 0.05); }
+  .layer-data .layer-title { color: #10b981; }
+  .layer-data .node { border-color: #10b981; }
+  
+  .layer-trending { border-color: #ef4444; background: rgba(239, 68, 68, 0.05); }
+  .layer-trending .layer-title { color: #ef4444; }
+  .layer-trending .node { border-color: #ef4444; }
+
+  /* Legend */
+  .legend {
+    position: absolute;
+    bottom: 30px;
+    left: 40px;
+    background: #2a2a35;
+    padding: 15px;
+    border-radius: 8px;
+    border: 1px solid #444;
+    z-index: 20;
+    width: 200px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    margin-bottom: 8px;
+    font-size: 13px;
+    color: #e4e4e7;
+  }
+  .legend-item:last-child { margin-bottom: 0; }
+  .legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>Search Typeahead System — Architecture</h1>
+
+  <!-- Client Layer -->
+  <div class="box-layer layer-client" style="top: 80px; left: 40px; width: 300px; height: 120px;">
+    <div class="layer-title">Client Layer</div>
+    <div class="node">
+      Browser / User
+    </div>
+  </div>
+
+  <!-- Frontend Layer -->
+  <div class="box-layer layer-frontend" style="top: 250px; left: 40px; width: 300px; height: 200px;">
+    <div class="layer-title">Frontend Layer</div>
+    <div class="node">
+      React UI
+      <div class="subtext">Vite, localhost:5173</div>
+    </div>
+    <div class="node">
+      Components
+      <div class="subtext">SearchBox, SuggestionDropdown, TrendingSection</div>
+    </div>
+  </div>
+
+  <!-- Backend Layer -->
+  <div class="box-layer layer-backend" style="top: 80px; left: 450px; width: 350px; height: 370px;">
+    <div class="layer-title">Backend API Layer</div>
+    <div class="node" style="margin-top: 10px;">
+      Express Server
+      <div class="subtext">localhost:3001</div>
+    </div>
+    <div class="node" style="height: 160px; display: flex; flex-direction: column; justify-content: center;">
+      Routes
+      <div class="subtext" style="line-height: 1.8;">
+        GET /suggest<br>POST /search<br>GET /trending<br>GET /cache/debug<br>GET /cache/stats
+      </div>
+    </div>
+  </div>
+
+  <!-- Trending Layer -->
+  <div class="box-layer layer-trending" style="top: 520px; left: 450px; width: 350px; height: 240px;">
+    <div class="layer-title">Trending Layer</div>
+    <div class="node" style="margin-top: 10px;">
+      Trending Tracker
+      <div class="subtext">24h sliding window</div>
+    </div>
+    <div class="node">
+      Scoring
+      <div class="subtext">overallCount * 0.3 + recentCount * 0.7</div>
+    </div>
+  </div>
+
+  <!-- Cache Layer -->
+  <div class="box-layer layer-cache" style="top: 80px; left: 900px; width: 440px; height: 350px;">
+    <div class="layer-title">Cache Layer</div>
+    <div class="node" style="margin-top: 10px;">
+      Consistent Hash Ring
+      <div class="subtext">MD5, 100 virtual replicas per node</div>
+    </div>
+    <div style="display: flex; gap: 10px; margin-bottom: 12px;">
+      <div class="node" style="flex:1; margin:0; font-size: 13px;">Cache Node 1<br><span class="subtext">Redis db0</span></div>
+      <div class="node" style="flex:1; margin:0; font-size: 13px;">Cache Node 2<br><span class="subtext">Redis db1</span></div>
+      <div class="node" style="flex:1; margin:0; font-size: 13px;">Cache Node 3<br><span class="subtext">Redis db2</span></div>
+    </div>
+    <div class="node" style="margin-bottom:0;">
+      Fallback: In-Memory Maps
+      <div class="subtext">If Redis unavailable</div>
+    </div>
+  </div>
+
+  <!-- Data Layer -->
+  <div class="box-layer layer-data" style="top: 480px; left: 900px; width: 440px; height: 280px;">
+    <div class="layer-title">Data Layer</div>
+    <div class="node" style="margin-top: 10px;">
+      Batch Writer Buffer
+      <div class="subtext">In-memory Map, flushes every 10s or 50 entries</div>
+    </div>
+    <div class="node" style="margin-top: 25px;">
+      Trie
+      <div class="subtext">In-memory prefix index, 100k+ queries</div>
+    </div>
+  </div>
+
+  <!-- Legend -->
+  <div class="legend">
+    <div style="font-weight: bold; margin-bottom: 12px; color: #fff;">Legend</div>
+    <div class="legend-item"><div class="legend-color" style="background: #3b82f6;"></div>Client Layer</div>
+    <div class="legend-item"><div class="legend-color" style="background: #8b5cf6;"></div>Frontend Layer</div>
+    <div class="legend-item"><div class="legend-color" style="background: #06b6d4;"></div>Backend API Layer</div>
+    <div class="legend-item"><div class="legend-color" style="background: #f59e0b;"></div>Cache Layer</div>
+    <div class="legend-item"><div class="legend-color" style="background: #10b981;"></div>Data Layer</div>
+    <div class="legend-item"><div class="legend-color" style="background: #ef4444;"></div>Trending Layer</div>
+  </div>
+
+  <!-- SVG Arrows -->
+  <svg>
+    <defs>
+      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+        <path d="M 0 0 L 10 5 L 0 10 z" fill="#a1a1aa" />
+      </marker>
+    </defs>
+    <style>
+      .link-solid { fill: none; stroke: #a1a1aa; stroke-width: 2px; marker-end: url(#arrow); }
+      .lbl { fill: #e4e4e7; font-size: 13px; font-weight: 500; font-family: sans-serif; text-anchor: middle; }
+      .bg { fill: #18181f; rx: 4; }
+    </style>
+
+    <!-- 1. Browser -> React UI -->
+    <path class="link-solid" d="M 190 170 L 190 280" />
+    <rect x="100" y="215" width="180" height="20" class="bg" />
+    <text class="lbl" x="190" y="230">1. user types / submits</text>
+
+    <!-- 2. React UI -> Express -->
+    <path class="link-solid" d="M 340 310 C 390 310, 390 140, 440 140" />
+    <rect x="290" y="195" width="180" height="20" class="bg" />
+    <text class="lbl" x="380" y="210">2. GET /suggest?q=&lt;prefix&gt;</text>
+
+    <!-- 3. React UI -> Express POST -->
+    <path class="link-solid" d="M 340 350 C 410 350, 410 170, 440 170" />
+    <rect x="330" y="275" width="120" height="20" class="bg" />
+    <text class="lbl" x="390" y="290">3. POST /search</text>
+
+    <!-- 4. Express -> Consistent Hash Ring -->
+    <path class="link-solid" d="M 800 130 L 890 130" />
+    <rect x="800" y="120" width="150" height="20" class="bg" />
+    <text class="lbl" x="845" y="135">4. hash(prefix) → node</text>
+
+    <!-- 5. Consistent Hash Ring -> Cache Nodes -->
+    <path class="link-solid" d="M 1120 180 L 1120 210" />
+    <rect x="1070" y="185" width="100" height="20" class="bg" />
+    <text class="lbl" x="1120" y="200">5. check cache</text>
+
+    <!-- 6. Cache Node -> Express -->
+    <path class="link-solid" d="M 900 250 C 850 250, 850 160, 800 160" />
+    <rect x="750" y="195" width="220" height="20" class="bg" />
+    <text class="lbl" x="860" y="210">6. return cached suggestions (TTL 60s)</text>
+
+    <!-- 7. Express -> Trie -->
+    <path class="link-solid" d="M 800 350 C 850 350, 850 640, 890 640" />
+    <rect x="760" y="475" width="200" height="20" class="bg" />
+    <text class="lbl" x="860" y="490">7. prefix scan, top 10 by score</text>
+
+    <!-- 8. Trie -> Cache Node -->
+    <path class="link-solid" d="M 1340 640 C 1460 640, 1460 250, 1340 250" />
+    <rect x="1350" y="435" width="100" height="20" class="bg" />
+    <text class="lbl" x="1400" y="450">8. store result</text>
+
+    <!-- 9. Trie -> Express -->
+    <path class="link-solid" d="M 900 670 C 830 670, 830 380, 800 380" />
+    <rect x="780" y="565" width="140" height="20" class="bg" />
+    <text class="lbl" x="850" y="580">9. return suggestions</text>
+
+    <!-- 10. Express -> Batch Writer Buffer -->
+    <path class="link-solid" d="M 800 410 C 860 410, 860 530, 890 530" />
+    <rect x="750" y="415" width="220" height="20" class="bg" />
+    <text class="lbl" x="860" y="430">10. POST /search → buffer increment</text>
+
+    <!-- 11. Batch Writer Buffer -> Trie -->
+    <path class="link-solid" d="M 1120 575 L 1120 605" />
+    <rect x="1030" y="580" width="180" height="20" class="bg" />
+    <text class="lbl" x="1120" y="595">11. flush every 10s or 50 entries</text>
+
+    <!-- 12. Express -> Trending Tracker -->
+    <path class="link-solid" d="M 590 450 L 590 540" />
+    <rect x="510" y="485" width="160" height="20" class="bg" />
+    <text class="lbl" x="590" y="500">12. log { query, timestamp }</text>
+
+    <!-- 13. Trending Tracker -> Express -->
+    <path class="link-solid" d="M 660 540 L 660 450" />
+    <rect x="560" y="485" width="220" height="20" class="bg" />
+    <text class="lbl" x="670" y="500">13. GET /trending → top 10 by score</text>
+
+    <!-- 14. Cache Node -> Invalidation arrow -> Trending Tracker -->
+    <path class="link-solid" d="M 1030 430 C 1030 580, 850 580, 800 580" />
+    <rect x="860" y="555" width="180" height="20" class="bg" />
+    <text class="lbl" x="950" y="570">14. invalidate on rank change</text>
+  </svg>
+</div>
+
+</body>
+</html>
