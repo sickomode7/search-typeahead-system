@@ -269,18 +269,18 @@
 
     <!-- 7. Express -> Trie -->
     <path class="link-solid" d="M 800 350 C 850 350, 850 640, 890 640" />
-    <rect x="760" y="475" width="200" height="20" class="bg" />
-    <text class="lbl" x="860" y="490">7. prefix scan, top 10 by score</text>
+    <rect x="760" y="465" width="200" height="20" class="bg" />
+    <text class="lbl" x="860" y="480">7. prefix scan, top 10 by score</text>
 
     <!-- 8. Trie -> Cache Node -->
-    <path class="link-solid" d="M 1340 640 C 1460 640, 1460 250, 1340 250" />
+    <path class="link-solid" d="M 1325 640 C 1460 640, 1460 250, 1325 250" />
     <rect x="1350" y="435" width="100" height="20" class="bg" />
     <text class="lbl" x="1400" y="450">8. store result</text>
 
     <!-- 9. Trie -> Express -->
     <path class="link-solid" d="M 900 670 C 830 670, 830 380, 800 380" />
-    <rect x="780" y="565" width="140" height="20" class="bg" />
-    <text class="lbl" x="850" y="580">9. return suggestions</text>
+    <rect x="780" y="525" width="140" height="20" class="bg" />
+    <text class="lbl" x="850" y="540">9. return suggestions</text>
 
     <!-- 10. Express -> Batch Writer Buffer -->
     <path class="link-solid" d="M 800 410 C 860 410, 860 530, 890 530" />
@@ -294,18 +294,18 @@
 
     <!-- 12. Express -> Trending Tracker -->
     <path class="link-solid" d="M 590 450 L 590 540" />
-    <rect x="510" y="485" width="160" height="20" class="bg" />
-    <text class="lbl" x="590" y="500">12. log { query, timestamp }</text>
+    <rect x="510" y="455" width="160" height="20" class="bg" />
+    <text class="lbl" x="590" y="470">12. log { query, timestamp }</text>
 
     <!-- 13. Trending Tracker -> Express -->
     <path class="link-solid" d="M 660 540 L 660 450" />
-    <rect x="560" y="485" width="220" height="20" class="bg" />
-    <text class="lbl" x="670" y="500">13. GET /trending → top 10 by score</text>
+    <rect x="550" y="515" width="220" height="20" class="bg" />
+    <text class="lbl" x="660" y="530">13. GET /trending → top 10 by score</text>
 
     <!-- 14. Cache Node -> Invalidation arrow -> Trending Tracker -->
-    <path class="link-solid" d="M 1030 430 C 1030 580, 850 580, 800 580" />
-    <rect x="860" y="555" width="180" height="20" class="bg" />
-    <text class="lbl" x="950" y="570">14. invalidate on rank change</text>
+    <path class="link-solid" d="M 1030 430 C 1030 600, 850 600, 800 600" />
+    <rect x="850" y="585" width="180" height="20" class="bg" />
+    <text class="lbl" x="940" y="600">14. invalidate on rank change</text>
   </svg>
 </div>
 
